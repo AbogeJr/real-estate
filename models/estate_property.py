@@ -46,7 +46,12 @@ class ReasEstatePropertyModel(models.Model):
     best_price = fields.Float(
         compute="_compute_best_price", string="Best Offer", readonly=True, store=True
     )
-    # offer_count = fields.Integer(compute="_compute_offer_count")
+    offer_count = fields.Integer(compute="_compute_offer_count", store=True)
+
+    @api.depends("offer_ids")
+    def _compute_offer_count(self):
+        for record in self:
+            record.offer_count = len(record.offer_ids)
 
     @api.depends("living_area", "garden_area")
     def _compute_total_area(self):
@@ -85,20 +90,21 @@ class ReasEstatePropertyModel(models.Model):
     @api.constrains("selling_price", "expected_price")
     def _check_selling_price(self):
         for record in self:
-            if not tools.float_utils.float_is_zero(
-                record.expected_price, precision_rounding=2
-            ):
-                if (
-                    tools.float_utils.float_compare(
-                        record.selling_price,
-                        record.expected_price * 0.9,
-                        precision_rounding=2,
-                    )
-                    == -1
+            if record.expected_price and record.selling_price:
+                if not tools.float_utils.float_is_zero(
+                    record.expected_price, precision_rounding=2
                 ):
-                    raise exceptions.ValidationError(
-                        "Selling price cannot be lower than 90% of expected price."
-                    )
+                    if (
+                        tools.float_utils.float_compare(
+                            record.selling_price,
+                            record.expected_price * 0.9,
+                            precision_rounding=2,
+                        )
+                        == -1
+                    ):
+                        raise exceptions.ValidationError(
+                            "Offer price cannot be lower than 90% of expected price."
+                        )
 
     @api.model
     def ondelete(self, vals):

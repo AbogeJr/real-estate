@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="report_property_offers">
+        <t t-foreach="docs" t-as="property">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-primary">
+                            <span t-field="property.name"/>
+                        </h2>
+                        <div class="d-flex col-12 justify-content-between">
+                            <div class="col-6">
+                                <strong>Type: </strong>
+                                <span t-field="property.property_type_id"/><br/>
+                                <strong>Expected Price: </strong>
+                                <span t-field="property.expected_price"/><br/>
+                                <strong>Offers: </strong>
+                                <span t-field="property.offer_count"/><br/>
+                            </div>
+                            <div class="col-6 text-end">
+                                <strong>Area: </strong>
+                                <span t-field="property.total_area"/>(Sqm)<br/>
+                                <strong>Bedrooms: </strong>
+                                <span t-field="property.bedrooms"/><br/>
+                                <strong>State: </strong>
+                                <span t-if="property.state == 'new'"><span class="text-info" t-field="property.state"/></span>
+                                <span t-if="property.state == 'sold'"><span class="text-success" t-field="property.state"/></span>
+                                <span t-if="property.state == 'canceled'" ><span class="text-danger" t-field="property.state"/></span> <br/>
+                            </div>
+                        </div>
+                        <br/><br/>
+                        <table class="table">
+                            <caption class="text-center">List of offers made</caption>
+                            <thead>
+                                <h5 class="text-center">Offers Made for <span t-field="property.name"/></h5>
+                            </thead>
+                            <tbody>
+                                <t t-set="offers" t-value="property.mapped('offer_ids')"/>
+                                <tr class="text-primary text-start">
+                                    <th>Customer</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                </tr>
+                                <tr t-foreach="offers" t-as="offer">
+                                    <td>
+                                        <span t-field="offer.partner_id"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="offer.price"/>
+                                    </td>
+                                    <td>
+                                    <span t-if="offer.status == 'accepted'"><span class="text-success" t-field="offer.status"/></span>
+                                    <span t-if="offer.status == 'refused'"><span class="text-danger" t-field="offer.status"/></span>
+                                    <span t-if="offer.status == 'pending'"><span class="text-warning" t-field="offer.status"/></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div t-if="property.state == 'sold'" class="col-12 d-flex justify-content-end p-3">
+                            <div class="col-4 border-2 border-top p-2 border-primary">
+                                <strong>
+                                <p class="d-flex col-12 justify-content-between"><span class="d-block col-6">Selling Price:</span> <span class="d-block col-6 text-end text-success" t-field="property.selling_price"/></p>
+                                <p class="d-flex col-12 justify-content-between"><span class="d-block col-6">Salesperson:</span> <span class="d-block col-6 text-end text-muted" t-field="property.salesperson_id"/></p>
+                                <p class="d-flex col-12 justify-content-between"><span class="d-block col-6">Buyer:</span> <span class="d-block col-6 text-end text-muted" t-field="property.buyer_id"/></p>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -11,6 +11,8 @@
         "views/estate_property_type_views.xml",
         "views/estate_property_tag_views.xml",
         "views/inherited_users_view.xml",
+        "report/estate_property_report_templates.xml",
+        "report/estate_property_report.xml",
         "views/estate_property_menus.xml",
     ],
     "installable": True,
