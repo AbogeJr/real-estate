@@ -1,9 +1,7 @@
 {
     "name": "Real Estate",
     "version": "1.0",
-    "depends": [
-        "base",
-    ],
+    "depends": ["base", "web"],
     "data": [
         "security/ir.model.access.csv",
         "views/estate_property_views.xml",
@@ -19,4 +17,9 @@
     "application": True,
     "auto_install": True,
     "license": "LGPL-3",
+    "assets": {
+        "web.assets_backend": [
+            "/real-estate/static/src/js/**/*",
+        ],
+    },
 }

@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <odoo>
+
+<record model="ir.actions.client" id="dashboard">
+      <field name="name">Dashboard</field>
+      <field name="tag">real-estate.dashboard</field>
+</record>
+
+
 <menuitem id="property_menu_root" name="Real Estate">
+    <menuitem id="menu_dashboard" name="Dashboard" sequence="1" action="dashboard"/>
     <menuitem id="menu_advertisements" name="Advertisements">
         <menuitem id="menu_property_view" name="Properties" action="action_property_view"/>
     </menuitem>

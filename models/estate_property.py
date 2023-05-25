@@ -114,5 +114,32 @@ class ReasEstatePropertyModel(models.Model):
             else:
                 return super().ondelete(vals)
 
-    # @api.model
-    # def create(self, vals):
+    @api.model
+    def get_statistics(self):
+        property_by_type = self.read_group(
+            [("state", "!=", "canceled")],
+            [],
+            ["property_type_id"],
+        )
+        print(property_by_type)
+
+        property_by_type_stats = {
+            g["property_type_id"][0]: g["property_type_id_count"]
+            for g in property_by_type
+        }
+
+        property_by_type_stats_with_name = {
+            self.env["estate.property.type"].browse(property_type_id).name: count
+            for property_type_id, count in property_by_type_stats.items()
+            if property_type_id
+        }
+
+        avg_price = self.search([("state", "=", "sold")]).read_group(
+            [("state", "=", "sold")], ["selling_price:avg(selling_price)"], []
+        )[0]["selling_price"]
+
+        return {
+            "count": self.search_count([]),
+            "avg_price": "{:.2f}".format(avg_price) if avg_price else 0.0,
+            "property_by_type": property_by_type_stats_with_name,
+        }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="real_estate.Dashboard" owl="1">
+        <Layout display="display">
+            <t t-set-slot="control-panel-bottom-left">
+            <button class="btn btn-primary" t-on-click="openNewProperties"> New Properties </button>
+            <button class="btn btn-primary" t-on-click="openSoldProperties"> Sold Properties </button>
+            <button class="btn btn-primary" t-on-click="increment">Counter: <t t-esc="state.counter" /></button>
+            </t>
+        </Layout>
+        <div class="m-3 col-6">
+            <Card >
+                <t t-set-slot="title">Property by type</t>
+                <PieChart data="statistics['property_by_type']" label="'Property by Property Type'"/>
+            </Card>
+        </div>
+        <div class=" m-3 d-flex border col-6">
+            <div t-foreach="keyToString" t-as="key" t-key="key" class="col-6">
+                <Card>
+                    <t t-set-slot="title"><t t-esc="keyToString[key]"/></t>
+                    <p class="card-text"><t t-esc="statistics[key]"/></p>
+                </Card>
+            </div>
+        </div>
+
+        <!-- <t t-call="awesome_tshirt.clientaction.statistics"/> -->
+        
+    </t>
+</templates>
