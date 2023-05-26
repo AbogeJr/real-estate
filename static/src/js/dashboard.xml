@@ -14,7 +14,7 @@
                 <PieChart data="statistics['property_by_type']" label="'Property by Property Type'"/>
             </Card>
         </div>
-        <div class=" m-3 d-flex border col-6">
+        <div class=" m-3 d-flex col-6">
             <div t-foreach="keyToString" t-as="key" t-key="key" class="col-6">
                 <Card>
                     <t t-set-slot="title"><t t-esc="keyToString[key]"/></t>

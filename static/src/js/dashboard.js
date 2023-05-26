@@ -26,7 +26,6 @@ class App extends Component {
     this.keyToString = {
       avg_price: "Average selling price of properties",
       count: "Number of properties",
-      // count: "Number of properties",
     };
     // this.rpc = useService("rpc");
     onWillStart(async () => {
