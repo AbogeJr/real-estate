@@ -1,5 +1,6 @@
 from odoo import models, fields, api, exceptions
 from dateutil.relativedelta import relativedelta
+from datetime import date
 
 
 class EstateProperyOfferModel(models.Model):
@@ -14,13 +15,10 @@ class EstateProperyOfferModel(models.Model):
     )
     partner_id = fields.Many2one("res.partner", required=True)
     property_id = fields.Many2one("estate.property", required=True)
-    validity = fields.Integer(store=True)
-    date_deadline = fields.Date(
-        compute="_compute_deadline",
-        inverse="_inverse_deadline",
-        string="Deadline",
-        store=True,
+    validity = fields.Integer(
+        compute="_compute_validity", inverse="_inverse_validity", tracking=True
     )
+    date_deadline = fields.Date(string="Deadline", tracking=True)
     property_type_id = fields.Many2one(
         "estate.property.type",
         related="property_id.property_type_id",
@@ -28,17 +26,19 @@ class EstateProperyOfferModel(models.Model):
     )
 
     @api.depends("validity", "date_deadline")
-    def _compute_deadline(self):
-        for record in self:
-            if record.validity:
-                record.date_deadline = fields.Date.today() + relativedelta(
-                    days=record.validity
-                )
-
-    def _inverse_deadline(self):
+    def _compute_validity(self):
+        today = date.today()
         for record in self:
             if record.date_deadline:
-                record.validity = (record.date_deadline - fields.Date.today()).days
+                record.validity = (record.date_deadline - today).days
+            else:
+                record.validity = 1
+
+    def _inverse_validity(self):
+        today = date.today()
+        for record in self:
+            if record.validity:
+                record.date_deadline = today + relativedelta(days=record.validity)
 
     def set_accepted(self):
         for record in self:

@@ -39,8 +39,8 @@
             <field name="arch" type="xml">
                 <form string="Property">
                 <header>
-                    <button type="object" name="set_sold" string="Sold" attrs="{'invisible': ['|', ('state', '=', 'canceled'), ('state', '=', 'sold')]}"/>
-                    <button type="object" name="set_cancelled" string="Cancel" attrs="{'invisible': ['|', ('state', '=', 'canceled'), ('state', '=', 'sold')]}" />
+                    <button type="object" t-attf-class="btn {{ state === 'new' ? 'btn-success' : 'disabled' }}" name="set_sold" string="Sell" attrs="{'invisible': ['|', ('state', '=', 'cancelled'), ('state', '=', 'sold')]}"/>
+                    <button type="object" t-attf-class="btn {{ state === 'offer_accepted' ? 'btn-warning' : 'disabled' }}" name="set_cancelled" string="Cancel" attrs="{'invisible': ['|', ('state', '=', 'cancelled'), ('state', '=', 'sold')]}" />
                     <field name="state" widget="statusbar" />
                 </header>
                     <sheet>
@@ -144,14 +144,17 @@
                                     <div class="text-muted">
                                         <div  t-if="record.state.raw_value == 'new'">
                                             Expected Price: <field name="expected_price"/><br/>
+                                            <span class="text-danger"><field name="state"/></span>
                                         </div>
-                                        <div  t-if="record.state.raw_value == 'offer_received'">
+                                        <div  t-if="record.state.raw_value == 'offer_received' || record.state.raw_value == 'offer_accepted'">
                                             Expected Price: <field name="expected_price"/><br/>
                                             Best Offer: <field name="best_price"/><br/>
+                                            <span class="text-info"><field name="state"/></span>
                                         </div>
                                         <div  t-if="record.state.raw_value == 'sold'">
                                             Expected Price: <field name="expected_price"/><br/>
                                             Selling Price: <field name="selling_price"/><br/>
+                                            <span class="text-success"><field name="state"/></span>
                                         </div>
                                         <field name="tag_ids" options="{'color_field': 'color'}" widget="many2many_tags"/>
                                     </div>

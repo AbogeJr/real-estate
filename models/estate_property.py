@@ -28,7 +28,7 @@ class ReasEstatePropertyModel(models.Model):
             ("offer_received", "Offer Received"),
             ("offer_accepted", "Offer Accepted"),
             ("sold", "Sold"),
-            ("canceled", "Canceled"),
+            ("cancelled", "Cancelled"),
         ],
         default="new",
         string="Status",
@@ -78,16 +78,21 @@ class ReasEstatePropertyModel(models.Model):
     def set_sold(self):
         # print("Hello World!")
         for record in self:
-            if record.state == "canceled":
-                raise exceptions.UserError("You cannot sell cancelled property")
+            if record.state == "offer_accepted":
+                if record.state == "cancelled":
+                    raise exceptions.UserError("You cannot sell cancelled property")
+                else:
+                    record.state = "sold"
+            elif record.state == "new":
+                raise exceptions.UserError("An offer has to be received")
             else:
-                record.state = "sold"
+                raise exceptions.UserError("An offer has to be accepted before selling")
 
     def set_cancelled(self):
         for record in self:
-            record.state = "canceled"
+            record.state = "cancelled"
 
-    @api.constrains("selling_price", "expected_price")
+    @api.constrains("selling_price", "offer_ids")
     def _check_selling_price(self):
         for record in self:
             if record.expected_price and record.selling_price:
@@ -109,7 +114,7 @@ class ReasEstatePropertyModel(models.Model):
     @api.model
     def ondelete(self, vals):
         for record in vals:
-            if record.state != "new" or record.state != "canceled":
+            if record.state != "new" or record.state != "cancelled":
                 raise exceptions.UserError("You cannot delete sold property")
             else:
                 return super().ondelete(vals)
@@ -117,7 +122,7 @@ class ReasEstatePropertyModel(models.Model):
     @api.model
     def get_statistics(self):
         property_by_type = self.read_group(
-            [("state", "!=", "canceled")],
+            [("state", "!=", "cancelled")],
             [],
             ["property_type_id"],
         )
